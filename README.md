@@ -1,4 +1,5 @@
 # SWSWG-Challenge
-My Submission for challenge on "Scalable Web Services with Golang" from Digital Talent Scholarship
+My Submission for challenge 2
 
-Every branch represent a challenge for every chapter
+Result :
+![alt text](https://github.com/aderama2711/SWSWG-Chal/blob/C2/result.png?raw=true)
