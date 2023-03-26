@@ -1,8 +1,21 @@
 package main
 
-import "C7/routers"
+import (
+	"C8/app"
+	"C8/config"
+
+	"github.com/joho/godotenv"
+)
+
+func init() {
+	godotenv.Load()
+
+	err := config.InitPostgres()
+	if err != nil {
+		panic(err)
+	}
+}
 
 func main() {
-	var PORT = ":8080"
-	routers.StartServer().Run(PORT)
+	app.StartApplication()
 }
