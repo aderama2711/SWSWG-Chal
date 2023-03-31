@@ -1,4 +1,37 @@
 # SWSWG-Challenge
-My Submission for challenge on "Scalable Web Services with Golang" from Digital Talent Scholarship
+My Submission for chapter 8
 
-Every branch represent a challenge for every chapter
+Result :
+
+- Add Book
+
+![alt text](https://github.com/aderama2711/SWSWG-Chal/blob/P1/AddBook.png?raw=true)
+
+- List All Books
+
+![alt text](https://github.com/aderama2711/SWSWG-Chal/blob/P1/ListBook.png?raw=true)
+
+- Update Book
+
+![alt text](https://github.com/aderama2711/SWSWG-Chal/blob/P1/UpdateBook.png?raw=true)
+
+- Get Book
+
+![alt text](https://github.com/aderama2711/SWSWG-Chal/blob/P1/GetBook.png?raw=true)
+
+
+- Delete Book
+
+![alt text](https://github.com/aderama2711/SWSWG-Chal/blob/P1/DeleteBook.png?raw=true)
+
+- Result Book Deleted
+
+![alt text](https://github.com/aderama2711/SWSWG-Chal/blob/P1/ResultDeleteBook.png?raw=true)
+
+- Wrong Data Type for id param
+
+![alt text](https://github.com/aderama2711/SWSWG-Chal/blob/P1/ParamInteger.png?raw=true)
+
+- Wrong ID
+
+![alt text](https://github.com/aderama2711/SWSWG-Chal/blob/P1/BookNotFound.png?raw=true)
