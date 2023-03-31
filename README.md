@@ -1,5 +1,5 @@
 # SWSWG-Challenge
-My Submission for chapter 8
+My Submission for project 1
 
 Result :
 
