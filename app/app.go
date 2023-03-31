@@ -1,10 +1,10 @@
 package app
 
 import (
-	"C8/config"
-	"C8/repository"
-	"C8/route"
-	"C8/service"
+	"P1/config"
+	"P1/repository"
+	"P1/route"
+	"P1/service"
 	"fmt"
 	"os"
 
@@ -14,7 +14,7 @@ import (
 var router = gin.New()
 
 func StartApplication() {
-	repo := repository.NewRepo(config.PSQL.DB)
+	repo := repository.NewRepo(config.GORM.DB)
 	app := service.NewService(repo)
 	route.RegisterApi(router, app)
 

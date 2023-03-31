@@ -1,11 +1,13 @@
 package config
 
 import (
-	"database/sql"
+	"P1/model"
 	"fmt"
 	"os"
 
-	_ "github.com/lib/pq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 type Postgres struct {
@@ -17,21 +19,21 @@ type Postgres struct {
 	Database string
 
 	// db connection
-	DB *sql.DB
+	DB *gorm.DB
 }
 
-type PsqlDb struct {
+type GormDb struct {
 	*Postgres
 }
 
 var (
-	PSQL *PsqlDb
+	GORM *GormDb
 )
 
 func InitPostgres() error {
-	PSQL = new(PsqlDb)
+	GORM = new(GormDb)
 
-	PSQL.Postgres = &Postgres{
+	GORM.Postgres = &Postgres{
 		Username: os.Getenv("POSTGRES_USER"),
 		Password: os.Getenv("POSTGRES_PASSWORD"),
 		Port:     os.Getenv("POSTGRES_PORT"),
@@ -40,12 +42,7 @@ func InitPostgres() error {
 	}
 
 	// connect to database
-	err := PSQL.Postgres.OpenConnection()
-	if err != nil {
-		return err
-	}
-
-	err = PSQL.DB.Ping()
+	err := GORM.Postgres.OpenConnection()
 	if err != nil {
 		return err
 	}
@@ -57,15 +54,21 @@ func (p *Postgres) OpenConnection() error {
 	// init dsn
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", p.Address, p.Port, p.Username, p.Password, p.Database)
 
-	dbConnection, err := sql.Open("postgres", dsn)
+	dbConnection, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			TablePrefix:   "library.",
+			SingularTable: false,
+		},
+	})
+
 	if err != nil {
 		return err
 	}
 
 	p.DB = dbConnection
 
-	// test connection
-	err = p.DB.Ping()
+	err = p.DB.Debug().AutoMigrate(model.Book{})
+
 	if err != nil {
 		return err
 	}

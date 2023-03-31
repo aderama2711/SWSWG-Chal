@@ -1,6 +1,6 @@
 package service
 
-import "C8/repository"
+import "P1/repository"
 
 type Service struct {
 	repo repository.RepoInterface

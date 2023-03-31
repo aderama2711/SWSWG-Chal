@@ -1,6 +1,6 @@
 package handler
 
-import "C8/service"
+import "P1/service"
 
 type HttpServer struct {
 	app service.ServiceInterface

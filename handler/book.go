@@ -1,18 +1,22 @@
 package handler
 
 import (
-	"C8/model"
+	"P1/model"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func (h HttpServer) CreateBook(c *gin.Context) {
 	var newBook model.Book
 	if err := c.ShouldBindJSON(&newBook); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+			"status":  http.StatusBadRequest,
+		})
 		return
 	}
 
@@ -20,14 +24,13 @@ func (h HttpServer) CreateBook(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err,
+			"message": err.Error(),
+			"status":  http.StatusInternalServerError,
 		})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"Book": res,
-	})
+	c.JSON(http.StatusCreated, res)
 }
 
 func (h HttpServer) ListBook(c *gin.Context) {
@@ -35,63 +38,117 @@ func (h HttpServer) ListBook(c *gin.Context) {
 	res, err := h.app.ListBook()
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err,
-		})
+		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"Book": res,
-	})
+	c.JSON(http.StatusOK, res)
 }
 
 func (h HttpServer) GetBook(c *gin.Context) {
-	id := c.Param("id")
+	temp_id := c.Param("id")
+
+	id, err := strconv.Atoi(temp_id)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "id param must be integer",
+			"status":  http.StatusBadRequest,
+		})
+		return
+	}
 
 	res, err := h.app.GetBook(id)
 
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, gin.H{
+				"message": err.Error(),
+				"status":  http.StatusNotFound,
+			})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err,
+			"message": err.Error(),
+			"status":  http.StatusInternalServerError,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"Book": res,
-	})
+	c.JSON(http.StatusOK, res)
 }
 
 func (h HttpServer) UpdateBook(c *gin.Context) {
-	id := c.Param("id")
-	var newBook model.Book
-	if err := c.ShouldBindJSON(&newBook); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		fmt.Println(err)
-		return
-	}
+	temp_id := c.Param("id")
 
-	res, err := h.app.UpdateBook(id, newBook)
+	id, err := strconv.Atoi(temp_id)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err,
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "id param must be integer",
+			"status":  http.StatusBadRequest,
 		})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"Book": res,
-	})
+	var newBook model.Book
+
+	newBook.ID = id
+
+	if err := c.ShouldBindJSON(&newBook); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+			"status":  http.StatusBadRequest,
+		})
+		return
+	}
+
+	res, err := h.app.UpdateBook(newBook)
+
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, gin.H{
+				"message": err.Error(),
+				"status":  http.StatusNotFound,
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+			"status":  http.StatusInternalServerError,
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, res)
 }
 
 func (h HttpServer) DeleteBook(c *gin.Context) {
-	id := c.Param("id")
+	temp_id := c.Param("id")
 
-	count, err := h.app.DeleteBook(id)
+	id, err := strconv.Atoi(temp_id)
 
 	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "id param must be integer",
+			"status":  http.StatusBadRequest,
+		})
+		return
+	}
+
+	var newBook model.Book
+	newBook.ID = id
+
+	err = h.app.DeleteBook(newBook)
+
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, gin.H{
+				"message": err.Error(),
+				"status":  http.StatusNotFound,
+			})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": err,
 		})
@@ -99,6 +156,6 @@ func (h HttpServer) DeleteBook(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": fmt.Sprintf("%d rows affected", count),
+		"message": fmt.Sprintf("Book deleted successfully"),
 	})
 }

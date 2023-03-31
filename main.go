@@ -1,8 +1,8 @@
 package main
 
 import (
-	"C8/app"
-	"C8/config"
+	"P1/app"
+	"P1/config"
 
 	"github.com/joho/godotenv"
 )

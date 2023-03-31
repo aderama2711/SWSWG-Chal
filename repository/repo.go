@@ -1,15 +1,15 @@
 package repository
 
-import "database/sql"
+import "gorm.io/gorm"
 
 type Repo struct {
-	db *sql.DB
+	db *gorm.DB
 }
 
 type RepoInterface interface {
 	BookRepo
 }
 
-func NewRepo(db *sql.DB) *Repo {
+func NewRepo(db *gorm.DB) *Repo {
 	return &Repo{db: db}
 }
